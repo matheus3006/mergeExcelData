@@ -5,10 +5,14 @@
    let emailBD = []
    let emailTerceiros = [];
    let mergedEmail = [];
+   let holder = [];
+   
    try {
-     const workbook = xlsx.readFile('./emailDb.xlsx');
+     let workbook = xlsx.readFile('./emailDb.xlsx');
+     
      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-
+     
+     
      //Busca os valores recebidos do banco de dados
      const fromDB = (worksheet) => {
        const columnA = [];
@@ -18,11 +22,9 @@
            columnA.push({localDb:worksheet[row].v});
          }
        }
-       columnA.shift();
-
+       
        return columnA;
      };
-
      //  Busca os valores adicionais 
      const fromThird = (worksheet) => {
        const columnB = [];
@@ -32,16 +34,13 @@
            columnB.push({thirdEmail:worksheet[row].v})
          }
        }
-       columnB.shift();
+       
        return columnB;
      }
 
      emailBD = fromDB(worksheet)
      emailTerceiros = fromThird(worksheet)
      
-    
-
-
      emailBD.forEach((data) => {
       //Cria função na qual vai buscar os valores de email
        const findAtEmail = (data) => {
@@ -52,25 +51,31 @@
        //Chama a função
        let atEmail = findAtEmail(data);
 
-
+       //Adiciona os emails de terceiros
        emailTerceiros.forEach((data) => {
          let email = data.thirdEmail
          if (email.includes(atEmail) === true) {
-           mergedEmail.push({mergedEmail: email});
+           holder.push(email);
          }
        })
 
-       mergedEmail.push({mergedEmail: data.localDb});
+       holder.push(data.localDb);
      });
+    //  Cria um novo array Sem a repetição
+     let noRepeat = [ ...new Set(holder) ];
      
     
-
+     noRepeat.forEach((data)=>{
+       mergedEmail.push({mergedEmail: data})
+     });
+     console.log(mergedEmail);
      let newWB = xlsx.utils.book_new();
      let newWS = xlsx.utils.json_to_sheet(mergedEmail);
-     console.log(newWS);
+    
      xlsx.utils.book_append_sheet(newWB,newWS,'mergedData');
      
-     xlsx.writeFile(newWB,'emailDB.xlsx')
+     
+     xlsx.writeFile(newWB,'emailDbMerged.xlsx')
 
    } catch (err) {
      console.log(err);
