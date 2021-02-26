@@ -1,0 +1,11 @@
+{
+  "name": "leitorDb",
+  "version": "1.0.0",
+  "description": "Le os arquivos de uma planilha de excel",
+  "main": "app.js",
+  "author": "matheus de souza",
+  "license": "MIT",
+  "dependencies": {
+    "xlsx": "^0.16.9"
+  }
+}
